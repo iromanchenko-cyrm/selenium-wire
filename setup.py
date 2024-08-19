@@ -11,8 +11,8 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 setup(
-    author="Will Keeling",
-    author_email='will@zifferent.com',
+    author="Ilya Romanchenko",
+    author_email='iromanchenko@cyrm.ru',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
@@ -33,7 +33,7 @@ setup(
     include_package_data=True,
     python_requires='>=3.6',
     install_requires=[
-        'blinker>=1.4',
+        'blinker>=1.4,<1.8.0',
         'brotli>=1.0.9',
         'certifi>=2019.9.11',
         "h2>=4.0; python_version>='3.6.0'",
