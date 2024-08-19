@@ -303,7 +303,7 @@ class Remote(InspectRequestsMixin, DriverCommonMixin, _Remote):
 
         if seleniumwire_options.get('auto_config', True):
             if SELENIUM_V4_10:
-                # From Selenium v4.10.0 the browser’s desired capabilities can no longer
+                # From Selenium v4.10.0 the browser's desired capabilities can no longer
                 # be passed, so we must use the options object instead.
                 for key, value in config.items():
                     remote_options.set_capability(key, value)
