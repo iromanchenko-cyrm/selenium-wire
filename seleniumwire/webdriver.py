@@ -29,6 +29,7 @@ from seleniumwire import backend, utils
 from seleniumwire.inspect import InspectRequestsMixin
 
 SELENIUM_V4 = parse_version(getattr(selenium, '__version__', '0')) >= parse_version('4.0.0')
+SELENIUM_V4_10 = parse_version(getattr(selenium, '__version__', '0')) >= parse_version('4.10.0')
 
 
 class DriverCommonMixin:
@@ -284,7 +285,7 @@ class Remote(InspectRequestsMixin, DriverCommonMixin, _Remote):
     """Extend the Remote webdriver to provide additional methods for inspecting requests."""
 
     def __init__(self, *args, seleniumwire_options=None, **kwargs):
-        """Initialise a new Firefox WebDriver instance.
+        """Initialise a new Remote WebDriver instance.
 
         Args:
             seleniumwire_options: The seleniumwire options dictionary.
@@ -292,17 +293,26 @@ class Remote(InspectRequestsMixin, DriverCommonMixin, _Remote):
         if seleniumwire_options is None:
             seleniumwire_options = {}
 
+        try:
+            remote_options = kwargs['options']
+        except KeyError:
+            remote_options = ChromeOptions()  # Chrome webdriver is used by default
+            kwargs['options'] = remote_options
+
         config = self._setup_backend(seleniumwire_options)
 
         if seleniumwire_options.get('auto_config', True):
-            capabilities = kwargs.get('desired_capabilities')
-            if capabilities is None:
-                capabilities = DesiredCapabilities.FIREFOX.copy()
+            if SELENIUM_V4_10:
+                # From Selenium v4.10.0 the browser’s desired capabilities can no longer
+                # be passed, so we must use the options object instead.
+                for key, value in config.items():
+                    remote_options.set_capability(key, value)
+
             else:
-                capabilities = capabilities.copy()
-
-            capabilities.update(config)
-
-            kwargs['desired_capabilities'] = capabilities
+                # Earlier versions of the Chromium webdriver API require the
+                # DesiredCapabilities to be explicitly passed.
+                capabilities = kwargs.setdefault('desired_capabilities', DesiredCapabilities.CHROME.copy())
+                capabilities.update(config)
+                kwargs['desired_capabilities'] = capabilities
 
         super().__init__(*args, **kwargs)
