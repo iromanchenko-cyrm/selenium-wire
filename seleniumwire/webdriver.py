@@ -127,8 +127,8 @@ class DriverCommonMixin:
             )
 
 
-class Firefox(InspectRequestsMixin, DriverCommonMixin, _Firefox):
-    """Extend the Firefox webdriver to provide additional methods for inspecting requests."""
+class FirefoxWrapper(InspectRequestsMixin, DriverCommonMixin, _Firefox):
+    """Extends the Firefox webdriver to provide additional methods for inspecting requests."""
 
     def __init__(self, *args, seleniumwire_options=None, **kwargs):
         """Initialise a new Firefox WebDriver instance.
@@ -180,8 +180,8 @@ class Firefox(InspectRequestsMixin, DriverCommonMixin, _Firefox):
         super().__init__(*args, **kwargs)
 
 
-class Chrome(InspectRequestsMixin, DriverCommonMixin, _Chrome):
-    """Extend the Chrome webdriver to provide additional methods for inspecting requests."""
+class ChromeWrapper(InspectRequestsMixin, DriverCommonMixin, _Chrome):
+    """Extends the Chrome webdriver to provide additional methods for inspecting requests."""
 
     def __init__(self, *args, seleniumwire_options=None, **kwargs):
         """Initialise a new Chrome WebDriver instance.
@@ -219,8 +219,8 @@ class Chrome(InspectRequestsMixin, DriverCommonMixin, _Chrome):
         super().__init__(*args, **kwargs)
 
 
-class Safari(InspectRequestsMixin, DriverCommonMixin, _Safari):
-    """Extend the Safari webdriver to provide additional methods for inspecting requests."""
+class SafariWrapper(InspectRequestsMixin, DriverCommonMixin, _Safari):
+    """Extends the Safari webdriver to provide additional methods for inspecting requests."""
 
     def __init__(self, seleniumwire_options=None, *args, **kwargs):
         """Initialise a new Safari WebDriver instance.
@@ -242,8 +242,8 @@ class Safari(InspectRequestsMixin, DriverCommonMixin, _Safari):
         super().__init__(*args, **kwargs)
 
 
-class Edge(InspectRequestsMixin, DriverCommonMixin, _Edge):
-    """Extend the Edge webdriver to provide additional methods for inspecting requests."""
+class EdgeWrapper(InspectRequestsMixin, DriverCommonMixin, _Edge):
+    """Extends the Edge webdriver to provide additional methods for inspecting requests."""
 
     def __init__(self, seleniumwire_options=None, *args, **kwargs):
         """Initialise a new Edge WebDriver instance.
@@ -281,8 +281,8 @@ class Edge(InspectRequestsMixin, DriverCommonMixin, _Edge):
         super().__init__(*args, **kwargs)
 
 
-class Remote(InspectRequestsMixin, DriverCommonMixin, _Remote):
-    """Extend the Remote webdriver to provide additional methods for inspecting requests."""
+class RemoteWrapper(InspectRequestsMixin, DriverCommonMixin, _Remote):
+    """Extends the Remote webdriver to provide additional methods for inspecting requests."""
 
     def __init__(self, *args, seleniumwire_options=None, **kwargs):
         """Initialise a new Remote WebDriver instance.
@@ -316,3 +316,27 @@ class Remote(InspectRequestsMixin, DriverCommonMixin, _Remote):
                 kwargs['desired_capabilities'] = capabilities
 
         super().__init__(*args, **kwargs)
+
+
+class Firefox:
+    def __new__(cls, *args, use_seleniumwire=False, **kwargs):
+        _class = FirefoxWrapper if use_seleniumwire else _Firefox
+        return _class(*args, **kwargs)
+
+
+class Chrome:
+    def __new__(cls, *args, use_seleniumwire=False, **kwargs):
+        _class = ChromeWrapper if use_seleniumwire else _Chrome
+        return _class(*args, **kwargs)
+
+
+class Edge:
+    def __new__(cls, *args, use_seleniumwire=False, **kwargs):
+        _class = EdgeWrapper if use_seleniumwire else _Edge
+        return _class(*args, **kwargs)
+
+
+class Remote:
+    def __new__(cls, *args, use_seleniumwire=False, **kwargs):
+        _class = RemoteWrapper if use_seleniumwire else _Remote
+        return _class(*args, **kwargs)
