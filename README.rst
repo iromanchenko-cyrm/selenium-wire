@@ -917,6 +917,7 @@ A summary of all options that can be passed to Selenium Wire via the ``seleniumw
     Enable the use of selenium-wire. ``False`` by default, meaning that all traffic goes directly without capturing via mitm proxy.
 
 .. code:: python
+
     driver = webdriver.Chrome(use_seleniumwire=True)
 
 ``verify_ssl``
