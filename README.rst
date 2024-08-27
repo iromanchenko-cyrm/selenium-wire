@@ -31,7 +31,7 @@ Simple Example
     from seleniumwire import webdriver  # Import from seleniumwire
 
     # Create a new instance of the Chrome driver
-    driver = webdriver.Chrome()
+    driver = webdriver.Chrome(use_seleniumwire=True)
 
     # Go to the Google home page
     driver.get('https://www.google.com')
@@ -188,10 +188,11 @@ Then just instantiate the webdriver as you would if you were using Selenium dire
 .. code:: python
 
     # Create the driver with no options (use defaults)
-    driver = webdriver.Chrome()
+    driver = webdriver.Chrome(use_seleniumwire=True)
 
     # Or create using browser specific options and/or seleniumwire_options options
     driver = webdriver.Chrome(
+        use_seleniumwire=True,
         options = webdriver.ChromeOptions(...),
         seleniumwire_options={...}
     )
@@ -215,6 +216,7 @@ Selenium Wire has limited support for using the remote webdriver client. When yo
         'addr': 'hostname_or_ip'  # Address of the machine running Selenium Wire. Explicitly use 127.0.0.1 rather than localhost if remote session is running locally.
     }
     driver = webdriver.Remote(
+        use_seleniumwire=True,
         command_executor='http://www.example.com',
         seleniumwire_options=options
     )
@@ -557,7 +559,7 @@ Selenium Wire works by redirecting browser traffic through an internal proxy ser
         options = {
             'disable_capture': True  # Don't intercept/store any requests
         }
-        driver = webdriver.Chrome(seleniumwire_options=options)
+        driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 ``seleniumwire_options.exclude_hosts``
     Use this option to bypass Selenium Wire entirely. Any requests made to addresses listed here will go direct from the browser to the server without involving Selenium Wire. Note that if you've configured an upstream proxy then these requests will also bypass that proxy.
@@ -567,7 +569,7 @@ Selenium Wire works by redirecting browser traffic through an internal proxy ser
         options = {
             'exclude_hosts': ['host1.com', 'host2.com']  # Bypass Selenium Wire for these hosts
         }
-        driver = webdriver.Chrome(seleniumwire_options=options)
+        driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 ``request.abort()``
     You can abort a request early by using ``request.abort()`` from within a `request interceptor`_. This will send an immediate response back to the client without the request travelling any further. You can use this mechanism to block certain types of requests (e.g. images) to improve page load performance.
@@ -595,7 +597,7 @@ Captured requests and responses are stored in the system temp folder by default 
     options = {
         'request_storage_base_dir': '/my/storage/folder'  # .seleniumwire will get created here
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 In-Memory Storage
 -----------------
@@ -607,7 +609,7 @@ Selenium Wire also supports storing requests and responses in memory only, which
     options = {
         'request_storage': 'memory'  # Store requests and responses in memory only
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 If you're concerned about the amount of memory that may be consumed, you can restrict the number of requests that are stored with the ``request_storage_max_size`` option:
 
@@ -617,7 +619,7 @@ If you're concerned about the amount of memory that may be consumed, you can res
         'request_storage': 'memory',
         'request_storage_max_size': 100  # Store no more than 100 requests in memory
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 When the max size is reached, older requests are discarded as newer requests arrive. Keep in mind that if you restrict the number of requests being stored, requests may have disappeared from storage by the time you come to retrieve them with ``driver.requests`` or ``driver.wait_for_request()`` etc.
 
@@ -637,7 +639,7 @@ The configuration takes the following format:
             'no_proxy': 'localhost,127.0.0.1'
         }
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 To use HTTP Basic Auth with your proxy, specify the username and password in the URL:
 
@@ -684,7 +686,7 @@ Using a SOCKS proxy is the same as using an HTTP based one but you set the schem
             'no_proxy': 'localhost,127.0.0.1'
         }
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 You can leave out the ``user`` and ``pass`` if your proxy doesn't require authentication.
 
@@ -768,7 +770,7 @@ A summary of all options that can be passed to Selenium Wire via the ``seleniumw
     options = {
         'addr': '192.168.0.10'  # Use the public IP of the machine
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 .. _`remote webdriver`: #creating-the-webdriver
 
@@ -783,7 +785,7 @@ A summary of all options that can be passed to Selenium Wire via the ``seleniumw
     options = {
         'ca_cert': '/path/to/ca.crt'  # Use own root certificate
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 ``ca_key``
     The path to the private key if you're using your own root certificate. The key must always be supplied when using your own certificate.
@@ -793,7 +795,7 @@ A summary of all options that can be passed to Selenium Wire via the ``seleniumw
     options = {
         'ca_key': '/path/to/ca.key'  # Path to private key
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 ``disable_capture``
     Disable request capture. When ``True`` nothing gets intercepted or stored. ``False`` by default.
@@ -803,7 +805,7 @@ A summary of all options that can be passed to Selenium Wire via the ``seleniumw
     options = {
         'disable_capture': True  # Don't intercept/store any requests.
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 ``disable_encoding``
     Ask the server to send back uncompressed data. ``False`` by default. When ``True`` this sets the ``Accept-Encoding`` header to ``identity`` for all outbound requests. Note that it won't always work - sometimes the server may ignore it.
@@ -813,7 +815,7 @@ A summary of all options that can be passed to Selenium Wire via the ``seleniumw
     options = {
         'disable_encoding': True  # Ask the server not to compress the response
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 ``enable_har``
     When ``True`` a HAR archive of HTTP transactions will be kept which can be retrieved with ``driver.har``. ``False`` by default.
@@ -823,7 +825,7 @@ A summary of all options that can be passed to Selenium Wire via the ``seleniumw
     options = {
         'enable_har': True  # Capture HAR data, retrieve with driver.har
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 ``exclude_hosts``
     A list of addresses for which Selenium Wire should be bypassed entirely. Note that if you have configured an upstream proxy then requests to excluded hosts will also bypass that proxy.
@@ -833,7 +835,7 @@ A summary of all options that can be passed to Selenium Wire via the ``seleniumw
     options = {
         'exclude_hosts': ['google-analytics.com']  # Bypass these hosts
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 ``ignore_http_methods``
     A list of HTTP methods (specified as uppercase strings) that should be ignored by Selenium Wire and not captured. The default is ``['OPTIONS']`` which ignores all OPTIONS requests. To capture all request methods, set ``ignore_http_methods`` to an empty list:
@@ -843,7 +845,7 @@ A summary of all options that can be passed to Selenium Wire via the ``seleniumw
     options = {
         'ignore_http_methods': []  # Capture all requests, including OPTIONS requests
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 ``port``
     The port number that Selenium Wire's backend listens on. You don't normally need to specify a port as a random port number is chosen automatically.
@@ -853,7 +855,7 @@ A summary of all options that can be passed to Selenium Wire via the ``seleniumw
     options = {
         'port': 9999  # Tell the backend to listen on port 9999 (not normally necessary to set this)
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 ``proxy``
     The upstream `proxy server <https://github.com/wkeeling/selenium-wire#proxies>`__ configuration if you're using a proxy.
@@ -867,7 +869,7 @@ A summary of all options that can be passed to Selenium Wire via the ``seleniumw
             'no_proxy': 'localhost,127.0.0.1'
         }
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 ``request_storage``
     The type of storage to use. Selenium Wire defaults to disk based storage, but you can switch to in-memory storage by setting this option to ``memory``:
@@ -877,7 +879,7 @@ A summary of all options that can be passed to Selenium Wire via the ``seleniumw
     options = {
         'request_storage': 'memory'  # Store requests and responses in memory only
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 ``request_storage_base_dir``
     The base location where Selenium Wire stores captured requests and responses when using its default disk based storage. This defaults to the system temp folder (that's ``/tmp`` on Linux and usually ``C:\Users\<username>\AppData\Local\Temp`` on Windows). A sub-folder called ``.seleniumwire`` will get created here to store the captured data.
@@ -887,7 +889,7 @@ A summary of all options that can be passed to Selenium Wire via the ``seleniumw
     options = {
         'request_storage_base_dir': '/my/storage/folder'  # .seleniumwire will get created here
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 ``request_storage_max_size``
     The maximum number of requests to store when using in-memory storage. Unlimited by default. This option currently has no effect when using the default disk based storage.
@@ -898,7 +900,8 @@ A summary of all options that can be passed to Selenium Wire via the ``seleniumw
         'request_storage': 'memory',
         'request_storage_max_size': 100  # Store no more than 100 requests in memory
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
+
 
 ``suppress_connection_errors``
     Whether to suppress connection related tracebacks. ``True`` by default, meaning that harmless errors that sometimes occur at browser shutdown do not alarm users. When suppressed, the connection error message is logged at DEBUG level without a traceback. Set to ``False`` to allow exception propagation and see full tracebacks.
@@ -908,7 +911,14 @@ A summary of all options that can be passed to Selenium Wire via the ``seleniumw
     options = {
         'suppress_connection_errors': False  # Show full tracebacks for any connection errors
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
+
+``use_seleniumwire``
+    Enable the use of selenium-wire. ``False`` by default, meaning that all traffic goes directly without capturing via mitm proxy.
+
+.. code:: python
+
+    driver = webdriver.Chrome(use_seleniumwire=True)
 
 ``verify_ssl``
     Whether SSL certificates should be verified. ``False`` by default, which prevents errors with self-signed certificates.
@@ -918,7 +928,7 @@ A summary of all options that can be passed to Selenium Wire via the ``seleniumw
     options = {
         'verify_ssl': True  # Verify SSL certificates but beware of errors with self-signed certificates
     }
-    driver = webdriver.Chrome(seleniumwire_options=options)
+    driver = webdriver.Chrome(seleniumwire_options=options, use_seleniumwire=True)
 
 License
 ~~~~~~~
